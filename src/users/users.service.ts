@@ -98,7 +98,7 @@ export class UsersService {
             },
             {
                 secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-                expiresIn: '15m',
+                expiresIn: '1m',
             }
         );
         const refreshToken = await this.jwtService.signAsync(
@@ -119,6 +119,7 @@ export class UsersService {
     }
 
     async refreshTokens(id: string, refreshToken: string){
+        console.log("2번 호출 되나?");
         const user = await this.usersRepository.findOneBy({id: id});
         if (!user || !user.refreshToken) {
             throw new NotFoundException('유저가 존재하지 않습니다.');
@@ -128,6 +129,14 @@ export class UsersService {
         const tokens = await this.getTokens(user.id, user.name);
         await this.updateRefreshToken(user.id,tokens.refreshToken);
         return tokens;
+    }
+
+    async checkUser(id:string) {
+        const user = await this.usersRepository.findOneBy({id: id});
+        if (!user) {
+            throw new NotFoundException('유저가 존재하지 않습니다.');
+        }
+        return true;
     }
 
     

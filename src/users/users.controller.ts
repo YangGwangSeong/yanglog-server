@@ -99,13 +99,17 @@ export class UsersController {
         
         return {accessToken: tokens.accessToken};
     }
+    
     @UseGuards(AccessTokenGuard)
     @Get('/checkUser')
     async checkUser(
         @Req() req: Request,
     ){
-        console.log(req.user);
-        return true;
+
+        const id = req.user['sub'];
+        //const user = await this.userService.checkUser(id);
+        
+        return await this.userService.getUserInfo(id);
     }
 
     //@UseGuards(AuthGuard)
