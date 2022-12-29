@@ -74,9 +74,17 @@ export class UsersController {
 
     //new
     @UseGuards(AccessTokenGuard)
-    @Get('/logout')
-    logout(@Req() req: Request):boolean {
-        return true
+    @Post('/logout')
+    logout(
+        @Req() req: Request,
+        @Res({passthrough: true}) res: Response
+        ):Promise<{logout:boolean}> {
+        res.clearCookie('Authentication',{
+            domain: 'localhost',
+            path: '/',
+            httpOnly: true,
+        });
+        return this.userService.logout(req.user['sub']);
     }
 
     //new

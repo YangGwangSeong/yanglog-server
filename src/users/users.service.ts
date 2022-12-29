@@ -77,10 +77,17 @@ export class UsersService {
         await this.updateRefreshToken(user.id,tokens.refreshToken);
         return tokens;
     }
+    async logout(id: string){
+        this.updateRefreshToken(id, null);
+        return { logout: true};
+    }
 
     async updateRefreshToken(id:string, refreshToken: string){
         const user = await this.usersRepository.findOneBy({id: id});
-        const hashedRefreshToken = await this.hashData(refreshToken);
+        let hashedRefreshToken = "";
+        if(refreshToken !== null){
+            hashedRefreshToken = await this.hashData(refreshToken);
+        }
         user.refreshToken = hashedRefreshToken;
         await this.usersRepository.save(user);
     }
